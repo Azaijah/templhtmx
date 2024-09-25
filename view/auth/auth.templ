@@ -1,0 +1,59 @@
+package auth
+
+import "github.com/templhtmx/view/layout"
+import "github.com/nedpals/supabase-go"
+
+templ Signin() {
+	@layout.App(false) {
+		<div class="flex justify-center mt-[calc(100vh-100vh+8rem)]">
+			<div class="max-w-md w-full bg-base-300 py-12 px-8 rounded-xl">
+				<h1 class="text-center text-xl font-black mb-10">Login to Golang-HTMX</h1>
+				@LoginForm(supabase.UserCredentials{}, LoginErrors{})
+			</div>
+		</div>
+	}
+}
+
+type LoginErrors struct {
+    Email string
+    Password string 
+    InvalidCreds string
+}
+
+templ LoginForm(creds supabase.UserCredentials, errors LoginErrors) {
+  <form
+		hx-post="/signin"
+		hx-swap="outerHTML"
+		class="space-y-4"
+	>
+        <div class="w-full">
+            <div class="label">
+                <span class="label-text">Email address</span>
+            </div>
+            <input type="email" value={creds.Email} name="email" autocomplete="off" required placeholder="Type here" class="input input-bordered">
+        if (len(errors.Email) > 0) {
+        <div class="label">
+            <span class="label-text-alt text-error">{errors.Email}</span>
+        </div>
+        }
+        </div>
+        <div class="w-full">
+            <div class="label">
+                <span class="label-text">Password</span>
+            </div>
+            <input type="password" name="password" required autocomplete="off" placeholder="Type here" class="input input-bordered">
+if (len(errors.Password) > 0) {
+  <div class="label">
+    <span class="label-text-alt text-error">{errors.Password}</span>
+  </div>
+}
+        </div>
+        if (len(errors.InvalidCreds) > 0) {
+  <div class="text-sm text-error">{errors.InvalidCreds}</div>
+}
+
+        <button type="submit" class="btn btn-primary w-full">
+            login <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </form>
+}
